@@ -168,6 +168,7 @@ Recommended formatting in HTML:
             function endTurn(){
                 turns += 1;
                 botMove();
+                victoryTest(context);
                 if (deck.length > 0 && !won){
                     stacks[0] = drawCard(1,stacks[0]);
                     stacks[8] = drawCard(1,stacks[8]);
@@ -460,11 +461,7 @@ Recommended formatting in HTML:
                     txt += "User sucks.";
                     console.log(txt);
                     return -1;
-                } 
-                else {
-                    txt += "Hello " + cardPick + "! How are you today?";
                 }
-                console.log(txt);
                 return cardPick;
             }
             
@@ -529,7 +526,7 @@ Recommended formatting in HTML:
                     endStack = to;
                     moveBotCards();
                     printBoard(context);
-                    console.log(canDoMoves + "-" + boardMoves);
+                    //console.log(canDoMoves + "-" + boardMoves);
                     botMove();
                 }
                 if(stacks[0].length == 0)
@@ -538,3 +535,6 @@ Recommended formatting in HTML:
                     return;
                 botMove();
             }
+
+
+
