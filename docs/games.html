@@ -474,11 +474,11 @@
             var won = false;
             context.font = "20px Georgia";
             var image = new Image();
-            image.src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/01c.gif';
+            image.src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/01c.gif?raw=true';
             var winImage = new Image();
-            winImage.src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/winner.gif';
+            winImage.src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/winner.gif?raw=true';
             var loseImage = new Image();
-            loseImage.src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/youlose.gif';
+            loseImage.src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/youlose.gif?raw=true';
             const width = image.width;
             const height = image.height;
             var xMouse = 0;
@@ -501,12 +501,12 @@
                         deck[dInd] = {cardInd: dInd, rank: ranks[j], suit: suits[i], color: 'black'};
                     }
                     cardPics[dInd] = new Image();
-                    cardPics[dInd].src = `https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/${ranks[j]}${suits[i]}.gif`;
+                    cardPics[dInd].src = `https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/${ranks[j]}${suits[i]}.gif?raw=true`;
                     dInd = dInd + 1;
                 }
             }
             cardPics[52] = new Image();
-            cardPics[52].src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/back111.gif';
+            cardPics[52].src = 'https://github.com/epmm/MyJSGames/blob/master/cardset-oxymoron/back111.gif?raw=true';
             var stacks = [deal(7), [], deal(1), [], [], deal(1), [], deal(1), deal(7), [], deal(1), []];
             const boardColors = ["#FF0000", "#008888", "#888800", "#880088", "#FFEE00", "#00FF00", "#77BBCC", "#4400AA", "#553333", "#0000FF", "#FF00AA", "#DD7733", "#00EEFF"];
             const boardGrid = [[0, 0, 300, 240], [300, 0, 300, 240], [600, 0, 300, 240], [900, 0, 300, 240], [0, 240, 300, 240], [300, 240, 300, 240], [600, 240, 300, 240],
