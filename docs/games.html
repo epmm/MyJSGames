@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html>
+<body onload = "init(), initit()">
+
+<br><br>
+    <center>
+			<div style="width: 918px; height: 600px; margin:auto;">
+    <canvas id="myCanvas" width="918" height="600" style="border:1px solid #000000;">
+        <script>
+                var c =document.getElementById("myCanvas");
+                var ctx =c.getContext("2d");
+                var mousePress = false;
+
+                /*****************************************/
+                document.getElementById("myCanvas").addEventListener("mousedown", mouseDown);
+                document.getElementById("myCanvas").addEventListener("mouseup", mouseUp);
+
+                function mouseDown() { 
+                  mousePress = !mousePress;
+                }
+
+                function mouseUp() {
+                  draw();
+                }
+                /****Above code used to add pause/resume effect on-click and keep the game from starting without you*****/
+
+                var colors = 
+                ["#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF"];
+
+                var colors2 = 
+                ["#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000",
+                "#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000",
+                "#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000",
+                "#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000",
+                "#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000","#000000"];
+
+                var colors3 = 
+                ["#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF",
+                "#FF0000","#FF8800","#FFBB00","#FFFF00","#00FF00","#00AAFF","#0067FF","#0000FF","#AA00FF","#FF00FF"];
+
+
+                var bricks = new Array();
+
+                var xsize = 10;	
+                var ysize = 5;
+                var nbricks = 0 ;
+
+                var state = true; //true means actively playing and the ball speed will be increasing. 
+
+                function coord(x,y) //using grid coordinates, calculates the element number of the 1-dimensional brick array
+                {
+                return y = y * xsize + x;
+                }
+
+                function init2() //level 3 brick coordinates
+                {
+                 nbricks = 100;
+                 for(var y = 0 ; y < 5 ; y = y + 1)
+                 {
+                  for(var x = 0 ; x < 10 ; x = x + 1)
+                  {
+                   bricks[coord(x,y)] = 2;
+                  }
+                 }
+
+                 draw();
+                }
+
+                function init1() //level 2 brick coordinates
+                {
+                 nbricks = 30;
+                 for(var y = 0 ; y < 5 ; y = y + 1)
+                 {
+                  for(var x = 0 ; x < 10 ; x = x + 1)
+                  {
+                   bricks[coord(x,y)] = 1;
+                  }
+                   bricks[coord(1,1)] = 0;
+                   bricks[coord(0,3)] = 0;
+                   bricks[coord(2,0)] = 0;
+                   bricks[coord(2,1)] = 0;
+                   bricks[coord(2,2)] = 0;
+                   bricks[coord(2,3)] = 0;
+                   bricks[coord(2,4)] = 0;
+                   bricks[coord(4,1)] = 0;
+                   bricks[coord(4,3)] = 0;
+                   bricks[coord(4,4)] = 0;
+                   bricks[coord(6,0)] = 0;
+                   bricks[coord(6,1)] = 0;
+                   bricks[coord(6,2)] = 0;
+                   bricks[coord(6,3)] = 0;
+                   bricks[coord(6,4)] = 0;
+                   bricks[coord(8,1)] = 0;
+                   bricks[coord(8,2)] = 0;
+                   bricks[coord(8,3)] = 0;
+                   bricks[coord(9,0)] = 0;
+                   bricks[coord(9,4)] = 0;
+
+                 }
+
+                 draw();
+                }
+
+
+                function init() //level 1 brick coordinates.... all bricks are initally alive, then the empty space bricks are overwritten below
+                {
+
+                 nbricks = 50;
+                 level = 0;
+                 for(var y = 0 ; y < 5 ; y = y + 1)
+                 {
+                  for(var x = 0 ; x < 10 ; x = x + 1)
+                  {
+                   bricks[coord(x,y)] = 2; //value of each brick = number of times it needs to be hit to dissappear
+                  }
+                   bricks[coord(1,0)] = 0;
+                   bricks[coord(3,0)] = 0;
+                   bricks[coord(5,0)] = 0;
+                   bricks[coord(7,0)] = 0;
+                   bricks[coord(9,0)] = 0;
+                   bricks[coord(0,1)] = 0;
+                   bricks[coord(2,1)] = 0;
+                   bricks[coord(4,1)] = 0;
+                   bricks[coord(6,1)] = 0;
+                   bricks[coord(8,1)] = 0;
+                   bricks[coord(1,2)] = 0;
+                   bricks[coord(3,2)] = 0;
+                   bricks[coord(5,2)] = 0;
+                   bricks[coord(7,2)] = 0;
+                   bricks[coord(9,2)] = 0;
+                   bricks[coord(0,3)] = 0;
+                   bricks[coord(2,3)] = 0;
+                   bricks[coord(4,3)] = 0;
+                   bricks[coord(6,3)] = 0;
+                   bricks[coord(8,3)] = 0;
+                   bricks[coord(1,4)] = 0;
+                   bricks[coord(3,4)] = 0;
+                   bricks[coord(5,4)] = 0;
+                   bricks[coord(7,4)] = 0;
+                   bricks[coord(9,4)] = 0;
+                 }
+
+                 draw();
+                }
+
+                var brickwidth = 90;
+                var brickheight = 45;
+                var brickwidthpadding = brickwidth + 2;
+                var brickheightpadding = brickheight + 2;
+
+
+                var levels = [ init, init1, init2 ];
+                var level = 0;
+                var printLevel = 0;
+
+
+                var mouseX = 439;
+                var mouseY = 0;
+
+                var xBall = 459;
+                var yBall = 525;
+
+                var xBallSpeed = 1; // had to slow ball speed and increase repaint rate to avoid teleport error when looking for brick-side contact**********************
+                var yBallSpeed = 1; // when changing ball speed remember there are 3 locations in the code where the ball speed is set/reset....
+
+                var nLives = 3;
+                var printLives = 3;
+                var nBrickLives = 2;
+
+
+
+                    function draw()
+                    {
+                             ctx.fillStyle="#ffffff";
+                             ctx.fillRect(0,0,918,600);
+
+                             for(var t = 0; t < nLives; t = t + 1) 
+                             {
+                              //this loop draws the black balls in the bottom left indicating lives remaining
+                              ctx.beginPath();
+                              ctx.fillStyle = "#000000";
+                              ctx.arc(25+15*t,585,5,0,2*Math.PI);
+                              ctx.closePath();
+                              ctx.fill();
+                             }
+
+                             //these loops below color the grid blocks for each level
+                             for(var y = 0 ; y < 5 ; y = y + 1)
+                             {
+                              for(var x = 0 ; x < 10 ; x = x + 1)
+                              {
+
+                              if(bricks[coord(x,y)] == 3)
+                               {
+                                ctx.fillStyle = colors3[coord(x,y)];
+                                ctx.fillRect(x * brickwidthpadding, y * brickheightpadding, brickwidth, brickheight);
+                               }
+
+                               if(bricks[coord(x,y)] == 2 || (level == 0 && bricks[coord(x,y)]==1) )
+                               {
+                                ctx.fillStyle = colors[coord(x,y)];
+                                ctx.fillRect(x * brickwidthpadding, y * brickheightpadding, brickwidth, brickheight);
+                               }
+
+                               if(bricks[coord(x,y)] == 1)
+                                {
+                                 ctx.fillStyle = colors2[coord(x,y)];
+                                 ctx.fillRect(x * brickwidthpadding, y * brickheightpadding, brickwidth, brickheight);
+                                }
+                              }
+                             }
+
+                        if(state)
+                        {
+                             ctx.fillStyle = "#000000";
+                             ctx.fillRect(mouseX-45,550,90,20);
+
+
+                             xBall = xBall + xBallSpeed;
+                             yBall = yBall - yBallSpeed;
+
+                            //*********************the next chunk of ifs causes the ball to bounce off the walls and the slider
+                             if (xBall >= 918)
+                              {
+                               xBall = 918;
+                               xBallSpeed = xBallSpeed * -1;
+                              }
+
+                             if (xBall <= 0)
+                               {
+                                xBall = 0;
+                                xBallSpeed = xBallSpeed * -1;
+                               }
+
+                             if (yBall <= 0)
+                              {
+                               yBall = 0;
+                               yBallSpeed = yBallSpeed * -1;
+                              }
+
+                             if (xBall < (mouseX-30) && xBall >= (mouseX - 45) && (yBall >= 550) && yBall <= 570 && xBallSpeed > 0) //left edge hit coming from left
+                               {
+                                yBall = 550;
+                                yBallSpeed = yBallSpeed * -1;
+                                xBallSpeed = xBallSpeed * -1;
+                               }
+                               else if (xBall < (mouseX-30) && xBall >= (mouseX - 45) && (yBall >= 550) && yBall <= 570 && xBallSpeed < 0) //left edge hit coming from right
+                               {
+                                yBall = 550;
+                                yBallSpeed = yBallSpeed * -1.03; //makes the ball go slightly faster
+                               }
+                             else if (xBall <= (mouseX + 45) && xBall > (mouseX + 30) && (yBall >= 550) && yBall <= 570 && xBallSpeed < 0) //right edge hit coming from right
+                             {
+                              yBall = 550;
+                              yBallSpeed = yBallSpeed * -1;
+                              xBallSpeed = xBallSpeed * -1;
+                             }
+                              else if (xBall <= (mouseX + 45) && xBall > (mouseX + 30) && (yBall >= 550) && yBall <= 570 && xBallSpeed > 0) //right edge hit coming from left
+                             {
+                              yBall = 550;
+                              yBallSpeed = yBallSpeed * -1.03; //makes the ball go slightly faster
+                             }
+                             else if (xBall <= (mouseX + 30) && xBall >= (mouseX - 30) && (yBall >= 550) && yBall <= 570) //central hit
+                             {	
+                              yBall = 550;
+                              yBallSpeed = yBallSpeed * -1.03;
+                              xBallSpeed = xBallSpeed * 1.03;  //makes the ball go slightly faster
+                             }
+
+
+
+                             ctx.beginPath();
+                             ctx.fillStyle = "#000000";
+                             ctx.arc(xBall,yBall,8,0,2*Math.PI); 
+                             ctx.closePath();
+                             ctx.fill();
+
+
+                             if (yBall <= 233) //looks for brick/ball contact, then changes brick status and redirects ball
+                              {
+                               var brickx = Math.floor(xBall / 92);
+                               var bricky = Math.floor(yBall / 47);
+                               if (bricks[coord(brickx,bricky)] >= 1)
+                                {
+                                 if((yBall%47 >= 1 && yBall%47 <= 44) && (xBall%92 >= 90 || xBall%92 <= 1)) // contact with left or right side of a brick   (yBall%47 > 0 && yBall%47 < 46) && (xBall%92 >= 90 || xBall%92 <= 1)
+                                  {
+                                      xBallSpeed = xBallSpeed * -1;
+                                     nbricks = nbricks - 1;
+                                  }
+                                  else //contact with top or bottom of brick
+                                    {
+                                        yBallSpeed = yBallSpeed * -1;
+                                     nbricks = nbricks - 1;
+                                    }
+
+                                }
+                               bricks[coord(brickx,bricky)] = bricks[coord(brickx,bricky)] - 1;
+                              }
+
+
+                              if (yBall >= 600)
+                              {
+                               if(nLives>0)
+                               {
+                                nLives = nLives - 1;
+                                xBall = 459;
+                                yBall = 525;
+                                xBallSpeed = 1;
+                                yBallSpeed = 1;
+                                mouseX = 459;
+                                state = false;
+                                printLives = nLives + 1;
+                               }
+                               else
+                               {
+                               ctx.fillStyle="#FF0000"; 
+                               ctx.fillRect(159,150,600,300);
+                               ctx.fillStyle="#FF8800";
+                               ctx.fillRect(164,155,590,290);
+                               ctx.fillStyle="#FFBB00";
+                               ctx.fillRect(169,160,580,280);
+                               ctx.fillStyle="#FFFF00";
+                               ctx.fillRect(174,165,570,270);
+                               ctx.fillStyle="#00FF00";
+                               ctx.fillRect(179,170,560,260);
+                               ctx.fillStyle="#00AAFF";
+                               ctx.fillRect(184,175,550,250);
+                               ctx.fillStyle="#0067FF";
+                               ctx.fillRect(189,180,540,240);
+                               ctx.fillStyle="#0000FF";
+                               ctx.fillRect(194,185,530,230);
+                               ctx.fillStyle="#AA00FF";							
+                               ctx.fillRect(199,190,520,220);
+                               ctx.fillStyle="#FF00FF";
+                               ctx.fillRect(204,195,510,210);
+                               ctx.font="100px Georgia";
+                               ctx.fillStyle="#000000";
+                               ctx.fillText("You Lose!",265,320,400);
+                                   printLives = 0;
+                               }
+                              }
+
+
+
+                             if(nbricks > 0)
+                             {
+                                 if(mousePress)
+                                     {
+                                         setTimeout(draw, 3);
+                                     }
+
+                             }
+                             else if(level < levels.length - 1)
+                             {
+                              level = level + 1;
+                                 printLevel = level + 1;
+                              setTimeout(levels[level], 1000);
+                              ctx.fillStyle="#FF0000"; 
+                                xBall = 459; // reset ball position after death
+                                yBall = 525; // reset ball position after death
+                                xBallSpeed = 1; // reset ball speed after death
+                                yBallSpeed = 1; // reset ball speed after death
+                                mouseX = 459;
+                              ctx.fillRect(0,0,918,600);
+                              ctx.fillStyle="#FF8800";
+                              ctx.fillRect(20,20,878,560);
+                              ctx.fillStyle="#FFBB00";
+                              ctx.fillRect(40,40,838,520);
+                              ctx.fillStyle="#FFFF00";
+                              ctx.fillRect(60,60,798,480);
+                              ctx.fillStyle="#00FF00";
+                              ctx.fillRect(80,80,758,440);
+                              ctx.fillStyle="#00AAFF";
+                              ctx.fillRect(100,100,718,400);
+                              ctx.fillStyle="#0067FF";
+                              ctx.fillRect(120,120,678,360);
+                              ctx.fillStyle="#0000FF";
+                              ctx.fillRect(140,140,638,320);
+                              ctx.fillStyle="#AA00FF";							
+                              ctx.fillRect(160,160,598,280);
+                              ctx.fillStyle="#FF00FF";
+                              ctx.fillRect(180,180,558,240);
+                              ctx.font="100px Georgia";
+                              ctx.fillStyle="#000000";
+                              ctx.fillText("NEXT LEVEL!!",184,320,550);
+                              var bodys = document.getElementById("page");
+                              switch(level)
+                               {
+                                case 0: bodys.setAttribute("style", "background-color: rgb(0,0,0);"); break;
+                                case 1: bodys.setAttribute("style", "background-color: rgb(0,0,0);"); break;
+                                case 2: bodys.setAttribute("style", "background: -moz-linear-gradient( top , rgba(255, 0, 0, 1) 0%, rgba(255, 255, 0, 1) 15%, rgba(0, 255, 0, 1) 30%, rgba(0, 255, 255, 1) 50%, rgba(0, 0, 255, 1) 65%,rgba(255, 0, 255, 1) 80%,rgba(255, 0, 0, 1) 100%);background: -webkit-gradient(linear,  left top,  left bottom, color-stop(0%, rgba(255, 0, 0, 1)), color-stop(15%, rgba(255, 255, 0, 1)),color-stop(30%, rgba(0, 255, 0, 1)),color-stop(50%, rgba(0, 255, 255, 1)),color-stop(65%, rgba(0, 0, 255, 1)),color-stop(80%, rgba(255, 0, 255, 1)),color-stop(100%, rgba(255, 0, 0, 1)));};"); break;
+                               }
+                              }
+                             else
+                             {
+                               ctx.fillStyle="#FF0000"; 
+                               ctx.fillRect(159,150,600,300);
+                               ctx.fillStyle="#FF8800";
+                               ctx.fillRect(164,155,590,290);
+                               ctx.fillStyle="#FFBB00";
+                               ctx.fillRect(169,160,580,280);
+                               ctx.fillStyle="#FFFF00";
+                               ctx.fillRect(174,165,570,270);
+                               ctx.fillStyle="#00FF00";
+                               ctx.fillRect(179,170,560,260);
+                               ctx.fillStyle="#00AAFF";
+                               ctx.fillRect(184,175,550,250);
+                               ctx.fillStyle="#0067FF";
+                               ctx.fillRect(189,180,540,240);
+                               ctx.fillStyle="#0000FF";
+                               ctx.fillRect(194,185,530,230);
+                               ctx.fillStyle="#AA00FF";							
+                               ctx.fillRect(199,190,520,220);
+                               ctx.fillStyle="#FF00FF";
+                               ctx.fillRect(204,195,510,210);
+                               ctx.font="100px Georgia";
+                               ctx.fillStyle="#000000";
+                               ctx.fillText("You Win!",265,320,400);
+                             }
+                        }
+                    else
+                     {
+                     state = true;
+                     setTimeout(draw, 2000);
+                     ctx.fillStyle="#FF0000"; 
+                     ctx.fillRect(0,0,918,600);
+                     ctx.fillStyle="#FF8800";
+                     ctx.fillRect(20,20,878,560);
+                     ctx.fillStyle="#FFBB00";
+                     ctx.fillRect(40,40,838,520);
+                     ctx.fillStyle="#FFFF00";
+                     ctx.fillRect(60,60,798,480);
+                     ctx.fillStyle="#00FF00";
+                     ctx.fillRect(80,80,758,440);
+                     ctx.fillStyle="#00AAFF";
+                     ctx.fillRect(100,100,718,400);
+                     ctx.fillStyle="#0067FF";
+                     ctx.fillRect(120,120,678,360);
+                     ctx.fillStyle="#0000FF";
+                     ctx.fillRect(140,140,638,320);
+                     ctx.fillStyle="#AA00FF";							
+                     ctx.fillRect(160,160,598,280);
+                     ctx.fillStyle="#FF00FF";
+                     ctx.fillRect(180,180,558,240);
+                     ctx.font="100px Georgia";
+                     ctx.fillStyle="#000000";
+                     ctx.fillText("HAHA YOU MESSED UP!",184,320,550);		  
+                     }
+                    }
+
+                c.onmousemove = function(event)
+                {
+                 mouseX = event.offsetX;
+                 mouseY = event.offsetY;
+
+                }
+                                                          </script>
+			</canvas>
+        </div>
+    </center>
+    <br><br>
+    <div style="width: 1200px; height: 720px; margin:auto;">
+        <canvas id="disCanvas" width="1200" height="720" style="position:absolute border:1px solid #000000;">
+        <script >
+            var disC =document.getElementById("disCanvas");
+            var context =disC.getContext("2d");
+            var won = false;
+            context.font = "20px Georgia";
+            var image = new Image();
+            image.src = 'pictures/cardset-oxymoron/01c.gif';
+            var winImage = new Image();
+            winImage.src = 'pictures/cardset-oxymoron/winner.gif';
+            var loseImage = new Image();
+            loseImage.src = 'pictures/cardset-oxymoron/youlose.gif';
+            const width = image.width;
+            const height = image.height;
+            var xMouse = 0;
+            var yMouse = 0;
+            const cardPics = [];
+            var deck = [];
+            const suits = ['c','d','h','s'];
+            const ranks = ['01','02','03','04','05','06','07','08','09','10','11','12','13'];
+            const stackAngs = [0*Math.PI/180, 135*Math.PI/180, 0*Math.PI/180, 45*Math.PI/180, 0, 90*Math.PI/180, 0, 90*Math.PI/180, 0*Math.PI/180,                                                  45*Math.PI/180, 0*Math.PI/180, -45*Math.PI/180];
+            const stackPos = [{x:10,y:73,dx:15,dy:0}, {x:602,y:190,dx:-14,dy:-14}, {x:715,y:143,dx:0,dy:-20}, {x:967,y:121,dx:14,dy:-14}, {x:0,y:0,dx:0,dy:0}, 
+                              {x:600,y:320,dx:-20,dy:0}, {x:715,y:310,dx:0,dy:0}, {x:997,y:320,dx:20,dy:0}, {x:10,y:553,dx:15,dy:0}, {x:550,y:479,dx:-14,dy:+14}, 
+                              {x:715,y:480,dx:0,dy:20}, {x:899,y:530,dx:14,dy:14}];
+            let dInd = 0;
+            for(var i = 0; i < 4; i = i + 1){
+                for(var j = 0; j < 13; j = j + 1){
+                    if(i == 1 || i == 2){
+                        deck[dInd] = {cardInd: dInd, rank: ranks[j], suit: suits[i], color: 'red'};
+                    }   
+                    else{
+                        deck[dInd] = {cardInd: dInd, rank: ranks[j], suit: suits[i], color: 'black'};
+                    }
+                    cardPics[dInd] = new Image();
+                    cardPics[dInd].src = `pictures/cardset-oxymoron/${ranks[j]}${suits[i]}.gif`;
+                    dInd = dInd + 1;
+                }
+            }
+            cardPics[52] = new Image();
+            cardPics[52].src = 'pictures/cardset-oxymoron/back111.gif';
+            var stacks = [deal(7), [], deal(1), [], [], deal(1), [], deal(1), deal(7), [], deal(1), []];
+            const boardColors = ["#FF0000", "#008888", "#888800", "#880088", "#FFEE00", "#00FF00", "#77BBCC", "#4400AA", "#553333", "#0000FF", "#FF00AA", "#DD7733", "#00EEFF"];
+            const boardGrid = [[0, 0, 300, 240], [300, 0, 300, 240], [600, 0, 300, 240], [900, 0, 300, 240], [0, 240, 300, 240], [300, 240, 300, 240], [600, 240, 300, 240],
+                               [900, 240, 300, 240], [0, 480, 300, 240], [300, 480, 300, 240], [600, 480, 300, 240], [900, 480, 300, 240], [100, 320, 100, 80]];
+            var pressMouse = false;
+            var whereMouse = 0;
+            var startStack = -1;
+            var endStack = -1;
+            var turns = 0;
+            document.getElementById("disCanvas").addEventListener("mousedown", downMouse);
+            document.getElementById("disCanvas").addEventListener("mouseup", upMouse);
+            document.getElementById("disCanvas").addEventListener("mouseleave", mouseLeave);
+            
+            function initit(){
+                //console.log(parseInt(stacks[0][0][0].rank));
+                printBoard(context);
+                
+            }
+            
+            function mouseLeave() {
+                pressMouse = false;
+                printBoard(context);
+            }
+            
+            function downMouse() { 
+                startStack = findMouse();
+                if(startStack != 4 && startStack != 6 && startStack != 0){
+                    pressMouse = true;
+                }
+                if(pressMouse){
+                    context.fillStyle = "#000000";
+                    context.fillRect(boardGrid[startStack][0], boardGrid[startStack][1], boardGrid[startStack][2], boardGrid[startStack][3]);
+                    printStack(context, stacks[startStack], startStack);
+                }
+            }
+
+            function upMouse() {
+                endStack = findMouse();
+                if(yoCanDo() && pressMouse){
+                    moveMyCards();
+                }
+                pressMouse = false;
+                printBoard(context);
+                victoryTest(context);
+            }
+            
+            function victoryTest(context){
+                if(stacks[8].length == 0){
+                    won = true;
+                    rotateAndPaintImage ( context, winImage, 0 , 280, 192, 0, 0 );
+                }
+                else if(stacks[0] == 0){
+                    won = true;
+                    rotateAndPaintImage ( context, loseImage, 0 , 360, 227, 0, 0 );
+                }
+            }
+            
+            function printBoard(context){
+                for(var i = 0; i < 13; i++){
+                    if(i == 4 || i == 12){
+                        context.fillStyle = boardColors[i];
+                        context.fillRect(boardGrid[i][0], boardGrid[i][1], boardGrid[i][2], boardGrid[i][3]);
+                    }
+                    else if(i == 6){
+                        context.fillStyle = boardColors[i];
+                        context.fillRect(boardGrid[i][0], boardGrid[i][1], boardGrid[i][2], boardGrid[i][3]);
+                        printStack(context, deck, i);
+                    }
+                    else{
+                        context.fillStyle = boardColors[i];
+                        context.fillRect(boardGrid[i][0], boardGrid[i][1], boardGrid[i][2], boardGrid[i][3]);
+                        printStack(context, stacks[i], i);
+                    }
+                }
+                context.fillStyle = "#000000";
+                context.fillText("End Turn", 110, 365);
+                context.fillText("Turns taken: " + turns, 90, 420);
+            }
+            
+            function printStack(context, stack, stackNum){
+                for(var i = 0; i < stack.length; i = i + 1) {
+                    if(stackNum == 0 || stackNum == 6){
+                        rotateAndPaintImage ( context, cardPics[52], stackAngs[stackNum], stackPos[stackNum].x + stackPos[stackNum].dx*i, stackPos[stackNum].y + stackPos[stackNum].dy*i, 0, 0 );
+                    }
+                    else{
+                        rotateAndPaintImage ( context, cardPics[stack[i][0].cardInd], stackAngs[stackNum], stackPos[stackNum].x + stackPos[stackNum].dx*i, stackPos[stackNum].y + stackPos[stackNum].dy*i, 0, 0 ); 
+                    }
+                }
+            }
+            
+            function rotateAndPaintImage ( context, cardImg, angleInRad , positionX, positionY, axisX, axisY ) {
+                context.translate( positionX, positionY );
+                context.rotate( angleInRad );
+                context.drawImage( cardImg, -axisX, -axisY );
+                context.rotate( -angleInRad );
+                context.translate( -positionX, -positionY );
+            }
+            
+            function deal(num){
+                let dealt = [];
+                let rand = 0;
+                for(var i = 0; i < num; i++){
+                    rand = Math.floor(Math.random() * deck.length);
+                    dealt.push(deck.slice(rand,rand + 1));
+                    deck.splice(rand, 1);
+                }
+                return dealt;
+            }
+            
+            function drawCard(num, stack){
+                let dealt = stack;
+                let rand = 0;
+                for(var i = 0; i < num; i++){
+                    rand = Math.floor(Math.random() * deck.length);
+                    dealt.push(deck.slice(rand,rand + 1));
+                    deck.splice(rand, 1);
+                }
+                return dealt;
+            }
+            
+            function endTurn(){
+                turns += 1;
+                botMove();
+                victoryTest(context);
+                if (deck.length > 0 && !won){
+                    stacks[0] = drawCard(1,stacks[0]);
+                    stacks[8] = drawCard(1,stacks[8]);
+                }
+                printBoard(context);
+                victoryTest(context);
+            }
+            
+            disC.onmousemove = function(event){
+                 xMouse = event.offsetX;
+                 yMouse = event.offsetY;
+                if(pressMouse){
+                    endStack = findMouse();
+                    if(yoCanDo() && endStack != startStack){
+                        context.fillStyle = "#FFFFFF";
+                        context.fillRect(boardGrid[endStack][0], boardGrid[endStack][1], boardGrid[endStack][2], boardGrid[endStack][3]);
+                        printStack(context, stacks[endStack], endStack);
+                    }
+                    if(whereMouse != endStack && whereMouse != startStack && whereMouse != 6 && whereMouse != 4){
+                        context.fillStyle = boardColors[whereMouse];
+                        context.fillRect(boardGrid[whereMouse][0], boardGrid[whereMouse][1], boardGrid[whereMouse][2], boardGrid[whereMouse][3]);
+                        printStack(context, stacks[whereMouse], whereMouse);
+                    }
+                    whereMouse = endStack;
+                }
+            }
+            
+            function isButtonClick() {
+                return (xMouse >= 100 && xMouse <= 200 && yMouse >= 320 && yMouse <= 400);
+            }
+            
+            function findMouse() {
+                let gridNum = 0;
+                for(var y = 0; y < 3; y++){
+                    for(var x = 0; x < 4; x++){
+                        if(xMouse >= 300*x && xMouse <= 300*(x+1)-1 && yMouse >= 240*y && yMouse <= 240*(y+1)-1){
+                            return gridNum;
+                        }
+                        gridNum += 1;
+                    }
+                }
+            }
+            
+            disC.addEventListener('click', (e) => {
+                const pos = {x: e.clientX, y: e.clientY};
+                if(isButtonClick()){
+                    endTurn();
+                }
+                else{
+                    
+                }
+            });
+            
+            function yoCanDo(){
+                if(stacks[startStack].length == 0)
+                    return false;
+                if(startStack == 1 || startStack == 3 || startStack == 9 || startStack == 11)
+                    return false;
+                if(endStack == 1 || endStack == 3 || endStack == 9 || endStack == 11) {
+                    if(startStack == 8 && stacks[endStack].length == 0) {
+                        if(stringHand(stacks[startStack]).indexOf("13") > -1)
+                            return true;
+                    }
+                    else if(startStack == 8) {
+                        for(var j = stacks[startStack].length-1; j >= 0 ; j--) {
+                            if(isPlayableCard(stacks[startStack][j][0], stacks[endStack][stacks[endStack].length-1][0]))
+                                return true;
+                        }
+                    }
+                    else if(startStack == 2 || startStack == 5 || startStack == 7 || startStack == 10) {
+                        if(stacks[endStack].length == 0)
+                            return (stringCard(stacks[startStack][0][0]).indexOf("13") > -1); 
+                        else 
+                            return isPlayableCard(stacks[startStack][0][0], stacks[endStack][stacks[endStack].length-1][0]);
+                    } 
+                    else if(isPlayableCard(stacks[startStack][0][0], stacks[endStack][stacks[endStack].length-1][0])){
+                        return true;
+                    }
+                }
+                if(endStack == 2 || endStack == 5 || endStack == 7 || endStack == 10) {
+                    if(stacks[endStack].length == 0)
+                        return true;
+                    else if(startStack == 8) {
+                        for(var j = stacks[startStack].length-1; j >= 0 ; j--) {
+                            if(isPlayableCard(stacks[startStack][j][0], stacks[endStack][stacks[endStack].length-1][0]))
+                                return true;
+                        }
+                    }
+                    else if(isPlayableCard(stacks[startStack][0][0], stacks[endStack][stacks[endStack].length-1][0]))
+                        return true;
+                }
+                return false;
+            }
+            
+            function botCanDo(){
+                if(stacks[startStack].length == 0)
+                    return false;
+                if(startStack == 1 || startStack == 3 || startStack == 9 || startStack == 11)
+                    return false;
+                if(endStack == 1 || endStack == 3 || endStack == 9 || endStack == 11) {
+                    if(startStack == 0 && stacks[endStack].length == 0) {
+                        if(stringHand(stacks[startStack]).indexOf("13") > -1)
+                            return true;
+                    }
+                    else if(startStack == 0) {
+                        for(var j = stacks[startStack].length-1; j >= 0 ; j--) {
+                            if(isPlayableCard(stacks[startStack][j][0], stacks[endStack][stacks[endStack].length-1][0]))
+                                return true;
+                        }
+                    }
+                    else if(startStack == 2 || startStack == 5 || startStack == 7 || startStack == 10) {
+                        if(stacks[endStack].length == 0)
+                            return (stringCard(stacks[startStack][0][0]).indexOf("13") > -1); 
+                        else 
+                            return isPlayableCard(stacks[startStack][0][0], stacks[endStack][stacks[endStack].length-1][0]);
+                    } 
+                    else if(isPlayableCard(stacks[startStack][0][0], stacks[endStack][stacks[endStack].length-1][0])){
+                        return true;
+                    }
+                }
+                if(endStack == 2 || endStack == 5 || endStack == 7 || endStack == 10) {
+                    if(stacks[endStack].length == 0)
+                        return true;
+                    else if(startStack == 0) {
+                        for(var j = stacks[startStack].length-1; j >= 0 ; j--) {
+                            if(isPlayableCard(stacks[startStack][j][0], stacks[endStack][stacks[endStack].length-1][0]))
+                                return true;
+                        }
+                    }
+                    else if(isPlayableCard(stacks[startStack][0][0], stacks[endStack][stacks[endStack].length-1][0]))
+                        return true;
+                }
+                return false;
+            }
+            
+            function stringHand(stack){
+                let handStr = "";
+                for(var i = 0; i < stack.length; i++){
+                    handStr += "card: " + stack[i][0].color + stack[i][0].rank + " ";
+                }
+                return handStr;
+            }
+            
+            function stringCard(card){
+                let cardStr = "" + card.rank + card.suit + card.color;
+                return cardStr;
+            }
+            
+            function cardName(card){
+                let name = "";
+                if(parseInt(card.rank) < 11 && parseInt(card.rank) > 1)
+                    name += "" + parseInt(card.rank);
+                else if(parseInt(card.rank) == 1)
+                    name += "Ace";
+                else if(parseInt(card.rank) == 11)
+                    name += "Jack";
+                else if(parseInt(card.rank) == 12)
+                    name += "Queen";
+                else if(parseInt(card.rank) == 13)
+                    name += "King";
+                if(card.suit.localeCompare("c") == 0)
+                    name += " of Clubs";
+                else if(card.suit.localeCompare("d") == 0)
+                    name += " of Diamonds";
+                else if(card.suit.localeCompare("h") == 0)
+                    name += " of Hearts";
+                else if(card.suit.localeCompare("s") == 0)
+                    name += " of Spades";
+                return name;
+            }
+            
+            function isPlayableCard(low, high){
+                let highRank = parseInt(high.rank);
+                let lowRank = parseInt(low.rank);
+                if(low.color.localeCompare(high.color) == 0){
+                    return false;
+                }
+                if(highRank == lowRank+1){
+                    return true;
+                }
+                return false;
+            }
+            
+            function moveCards(){
+                let stackSize = stacks[startStack].length
+                for(var i = 0; i < stackSize; i++){
+                    stacks[endStack].push(stacks[startStack].shift());
+                }
+            }
+            
+            function moveCard(ind){  
+                stacks[endStack].push(stacks[startStack][ind].splice(0, 1));
+                stacks[startStack].splice(ind, 1);
+            }
+            
+            function moveMyCards() {
+                if(startStack == 2 || startStack == 5 || startStack == 7 || startStack == 10) {
+                    moveCards();
+                }
+                else if((startStack == 8 || startStack == 0) && stacks[endStack].length == 0) {
+                    if(endStack == 1 || endStack == 3 || endStack == 9 || endStack == 11) {
+                        let numKings = 0;
+                        let kingIndex = 0;
+                        for(var i = 0; i < stacks[startStack].length; ++i) {
+                            if(stringCard(stacks[startStack][i][0]).indexOf("13") > -1) { 
+                                ++numKings;
+                                kingIndex = i;
+                            }
+                        }       
+                        if(numKings == 1)
+                            moveCard(kingIndex);
+                        else {
+                            kingIndex = askForCard();
+                            if(kingIndex == -1)
+                                return;
+                            if(stringCard(stacks[startStack][kingIndex][0]).indexOf("13") > -1) {
+                                moveCard(kingIndex);
+                            }
+                            else
+                                moveMyCards();  
+                        }
+                    }
+                    else{
+                        var cardIndex = askForCard();
+                        if(cardIndex == -1)
+                            return;
+                        moveCard(cardIndex);
+                    }
+                }
+                else if((startStack == 8 || startStack == 0) && stacks[endStack].length != 0) {  
+                    for(var i = 0; i < stacks[startStack].length; ++i) {
+                        if(isPlayableCard(stacks[startStack][i][0], stacks[endStack][stacks[endStack].length-1][0])) {
+                            moveCard(i);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            function moveBotCards() {
+                if(startStack == 2 || startStack == 5 || startStack == 7 || startStack == 10) {
+                    moveCards();
+                }
+                else if((startStack == 8 || startStack == 0) && stacks[endStack].length == 0) {
+                    if(endStack == 1 || endStack == 3 || endStack == 9 || endStack == 11) {
+                        let numKings = 0;
+                        let kingIndex = 0;
+                        for(var i = 0; i < stacks[startStack].length; ++i) {
+                            if(stringCard(stacks[startStack][i][0]).indexOf("13") > -1) { 
+                                ++numKings;
+                                kingIndex = i;
+                            }
+                        }       
+                        if(numKings == 1)
+                            moveCard(kingIndex);
+                        else {
+                            //kingIndex = askForCard(); ***********could add function to make Bot choose specific King based on its hand****************
+                            if(kingIndex == -1)
+                                return;
+                            if(stringCard(stacks[startStack][kingIndex][0]).indexOf("13") > -1) {
+                                moveCard(kingIndex);
+                            }  
+                        }
+                    }
+                    else{
+                        var cardIndex = stacks[startStack].length-1;  //***********could add function to make Bot choose specific card based on its hand****************
+                        if(cardIndex == -1)
+                            return;
+                        moveCard(cardIndex);
+                    }
+                }
+                else if((startStack == 8 || startStack == 0) && stacks[endStack].length != 0) {  
+                    for(var i = 0; i < stacks[startStack].length; ++i) {
+                        if(isPlayableCard(stacks[startStack][i][0], stacks[endStack][stacks[endStack].length-1][0])) {
+                            moveCard(i);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            function askForCard(){
+                var txt = "";
+                var question = "Enter index number of card you'd like to move:\n";
+                for(var i = 0; i < stacks[8].length; ++i){
+                    question = question + i + "--->" + cardName(stacks[8][i][0]) + "\n"; 
+                }
+                var cardPick = prompt(question, "");
+                if (cardPick == null || cardPick == "" || parseInt(cardPick, 10) > stacks[8].length || parseInt(cardPick, 10) < 0 || isNaN(parseInt(cardPick, 10))) {
+                    txt += "User sucks.";
+                    console.log(txt);
+                    return -1;
+                }
+                return cardPick;
+            }
+            
+            function botMove() {
+                startStack = 0;
+                endStack = -1;
+                if(stacks[0].length == 0)
+                    return;
+                let canDoMoves = 0;
+                let toIndex = -1;
+                for(var i = 0; i < 12; ++i) { //Looks for moves within hand
+                    endStack = i;
+                    if(i == 0 || i == 4 || i == 6 || i == 8)
+                        continue;
+                    else if(botCanDo()) {
+                        toIndex = i;
+                        ++canDoMoves;
+                    }
+                }
+                if(canDoMoves == 1) {
+                    endStack = toIndex;
+                    moveBotCards();
+                    printBoard(context);
+                }
+                else if(canDoMoves > 1) {
+                    endStack = toIndex;
+                    moveBotCards();
+                    printBoard(context);
+                    botMove();
+                }
+
+                if(stacks[0].length == 0)
+                    return;
+                let boardMoves = 0;
+                let to = -1;
+                let from = -1;
+                for(var i = 0; i < 12; ++i) { //looks for moves with board stacks
+                    startStack = i;
+                    if(i == 0 || i == 4 || i == 6 || i == 8 || i == 1 || i == 3 || i == 9 || i == 11)
+                        continue;
+                    else  {
+                        for(var j = 0; j < 12; ++j) {
+                            endStack = j;
+                            if(j == 0 || j == 4 || j == 6 || j == 8)
+                                continue;
+                            else if(botCanDo()) {
+                                ++boardMoves;
+                                to = j;
+                                from = i;
+                            }
+                        }
+                    }
+                }
+                if(boardMoves == 1) {
+                    startStack = from;
+                    endStack = to;
+                    moveBotCards();
+                    printBoard(context);
+                }
+                else if(boardMoves > 1) {
+                    startStack = from;
+                    endStack = to;
+                    moveBotCards();
+                    printBoard(context);
+                    //console.log(canDoMoves + "-" + boardMoves);
+                    botMove();
+                }
+                if(stacks[0].length == 0)
+                    return;
+                if(canDoMoves == 0 && boardMoves == 0)
+                    return;
+                botMove();
+            }
+
+            </script>
+        </canvas>
+    </div>
+
+</body>
+</html>
